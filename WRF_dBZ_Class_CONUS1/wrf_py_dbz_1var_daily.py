@@ -196,8 +196,8 @@ def main_function(file_date_time):
 
     ## Set output file path and name:
     output_path_1 = '/glade/u/home/hungjui/2scratch/DATA_WRF_CONUS_1_dBZ_v1.0/' + wrf_sim_type
-    output_path_2 = '/20130913'
-    # output_path_2 = '/{}'.format(file_date_time.strftime('%Y'))
+    # output_path_2 = '/20130913'
+    output_path_2 = '/{}'.format(file_date_time.strftime('%Y'))
     output_file_name = set_output_name(file_date_time)
     wrf_dataset_out.to_netcdf(output_path_1 + output_path_2 + output_file_name)
         
@@ -234,8 +234,8 @@ end = time.time()
 # print("RUNTIME：%f HOUR" % ((end - start)/3600))
 
 run_time_txt = open('./run_time.log','a')
-run_time_txt.write(sys.argv[1])
-run_time_txt.write(sys.argv[2] + ' - ' + sys.argv[3])
+run_time_txt.write(sys.argv[1] + '\n')
+run_time_txt.write(sys.argv[2] + ' - ' + sys.argv[3] + '\n')
 run_time_txt.write("RUNTIME：%f SEC \n" % (end - start))
 run_time_txt.write("RUNTIME：%f MIN \n" % ((end - start)/60))
 run_time_txt.write("RUNTIME：%f HOUR \n" % ((end - start)/3600))
