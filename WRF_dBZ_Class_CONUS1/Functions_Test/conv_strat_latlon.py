@@ -8,9 +8,13 @@
 
 # Converting the Yuter and Houze (1998) and the Steiner and Houze (1995)
 
+# ;===================================================================
+
 import numpy as np
 import scipy.ndimage as ndi
 from copy import deepcopy
+
+# ;===================================================================
 # ; Name:
 # ;     CONV_STRAT_LATLON
 # ; Purpose:
