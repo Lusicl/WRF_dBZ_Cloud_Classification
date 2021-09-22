@@ -168,7 +168,7 @@ def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=
     if method == 'SYH':
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
             dbz-bkgnd > (bg_diff-(bkgnd**2.)/180.))
-# ; This line uses YH (1998) climatological tuning algorithm
+    # ; This line uses YH (1998) climatological tuning algorithm
     else:
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
             dbz-bkgnd > a*np.cos((np.pi*bkgnd)/(2.*b)))
