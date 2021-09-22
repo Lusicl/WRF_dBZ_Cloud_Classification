@@ -25,7 +25,7 @@ Purpose:
     Yuter and Houze (YH 1998 - QJMS) algorithm.
 
 Calling sequence:
-    conv_stra_identification
+    conv_stra_sep
 
 Input:
     zfield      2-D radar reflectivity data (dBZ)
@@ -133,7 +133,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return c * re
 
 
-def conv_stra_identification(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
+def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
 
     #    xdim = N_ELEMENTS(x[*,0])-1
     #    ydim = N_ELEMENTS(y[0,*])-1
@@ -189,11 +189,11 @@ def conv_stra_identification(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a
 
     cc[np.where(inbkCore == True)] = 3
 
-# ; Test for convective core threshold
+    # ; Test for convective core threshold
     inCore = (dbz >= CoreThresh)
     cc[np.where(inCore == True)] = 4
-# ;-------------------------------------------------
-#PRINT,'Beginning application of radius'
+
+    #PRINT,'Beginning application of radius'
 
     # anywhere data is good, give it a 0 at least. 0 is stratiform
     cs[np.where(good == True)] = 0
