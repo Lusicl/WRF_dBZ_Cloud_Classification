@@ -152,13 +152,13 @@ def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100,
     bkgnd = np.full(dbz.shape, np.nan)
 
     # if dbz is a masked array, then just grab the opposite of the mask
-    if isinstance(dbz, np.ma.masked_array):
-        bad = deepcopy(dbz.mask)
-    else:
-        bad = dbz == np.nan
-    good = np.logical_not(bad)
+#     if isinstance(dbz, np.ma.masked_array):
+#         bad = deepcopy(dbz.mask)
+#     else:
+#         bad = dbz == np.nan
+#     good = np.logical_not(bad)
 
-    dbz[np.where(bad)] = fill_dbz
+#     dbz[np.where(bad)] = fill_dbz
 
     # calculate linear reflectivity
     zlin = 10.**(dbz/10.)
@@ -178,6 +178,7 @@ def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100,
     if method == 'SYH':
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
             dbz-bkgnd > (bg_diff-(bkgnd**2.)/180.))
+    
     # ; This line uses YH (1998) climatological tuning algorithm
     else:
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
