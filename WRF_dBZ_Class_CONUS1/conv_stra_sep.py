@@ -8,7 +8,7 @@
 
 # Converting the Yuter and Houze (1998) and the Steiner and Houze (1995)
 
-# Modified by Hungjui Yu, Sep. 2021, for use with Hires WRF CONUS CTRL & PGW runs
+# Modified by Hungjui Yu, Oct. 2021, for use with Hires WRF CONUS CTRL & PGW runs
 
 import numpy as np
 import scipy.ndimage as ndi
@@ -74,7 +74,7 @@ Author and history:
                     Missing value added and updated in procedure.
     ...
 
-    22 Sep 2021     ...
+    05 Oct 2021     ...
 '''
 
 
@@ -133,7 +133,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return c * re
 
 
-def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
+def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100, tune_thresh=42.43, sm_rad=11, fill_dbz=0.0, bg_diff=10):
 
     #    xdim = N_ELEMENTS(x[*,0])-1
     #    ydim = N_ELEMENTS(y[0,*])-1
