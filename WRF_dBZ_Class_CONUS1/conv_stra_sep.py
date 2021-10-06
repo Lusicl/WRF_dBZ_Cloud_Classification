@@ -133,12 +133,12 @@ def haversine(lat1, lon1, lat2, lon2):
     return c * re
 
 
-def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100, tune_thresh=42.43, sm_rad=11, fill_dbz=0.0, bg_diff=10):
+def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
 
-    #    xdim = N_ELEMENTS(x[*,0])-1
-    #    ydim = N_ELEMENTS(y[0,*])-1
+    # xdim = N_ELEMENTS(x[*,0])-1
+    # ydim = N_ELEMENTS(y[0,*])-1
 
-    assert method in ['SYH', 'YH']  # make sure it's either SYH or YH
+    assert method in ['SYH', 'YH'] # make sure it's either SYH or YH
 
     lon1d = lon2d[0, :]
     lat1d = lat2d[:, 0]
@@ -152,14 +152,15 @@ def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100,
     bkgnd = np.full(dbz.shape, np.nan)
 
     # if dbz is a masked array, then just grab the opposite of the mask
-#     if isinstance(dbz, np.ma.masked_array):
-#         bad = deepcopy(dbz.mask)
-#     else:
-#         bad = dbz == np.nan
-#     good = np.logical_not(bad)
-
-#     dbz[np.where(bad)] = fill_dbz
-
+    if isinstance(dbz, np.ma.masked_array):
+        bad = deepcopy(dbz.mask)
+    else:
+        bad = dbz == np.nan
+    
+    good = np.logical_not(bad)
+    
+    dbz[np.where(bad)] = fill_dbz
+    
     # calculate linear reflectivity
     zlin = 10.**(dbz/10.)
 
@@ -169,38 +170,36 @@ def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100,
     bkgnd_lin = ndi.median_filter(zlin, size=(sm_rad, sm_rad), mode='nearest')
 
     bkgnd = 10.*np.log10(bkgnd_lin)
-    bkgnd[np.where(bad == True)] = np.nan
+    bkgnd[np.where(bad==True)] = np.nan
 
     inThr = (bkgnd < 0.) & ((dbz - bkgnd) > bg_diff)
-    cc[np.where(inThr == True)] = 1
+    cc[np.where(inThr==True)] = 1
 
-    # ; Next line uses SYH 1995 radius algorithm
+    #; Next line uses SYH 1995 radius algorithm
     if method == 'SYH':
-        inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
-            dbz-bkgnd > (bg_diff-(bkgnd**2.)/180.))
+        inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (dbz-bkgnd > (bg_diff-(bkgnd**2.)/180.))
     
-    # ; This line uses YH (1998) climatological tuning algorithm
+    #; This line uses YH (1998) climatological tuning algorithm
     else:
-        inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (
-            dbz-bkgnd > a*np.cos((np.pi*bkgnd)/(2.*b)))
+        inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (dbz-bkgnd > a*np.cos((np.pi*bkgnd)/(2.*b)))
 
-    cc[np.where(inCon == True)] = 2
+    cc[np.where(inCon==True)] = 2
 
     inbkCore = bkgnd >= tune_thresh
 
-    cc[np.where(inbkCore == True)] = 3
+    cc[np.where(inbkCore==True)] = 3
 
-    # ; Test for convective core threshold
+#; Test for convective core threshold
     inCore = (dbz >= CoreThresh)
-    cc[np.where(inCore == True)] = 4
-
-    #PRINT,'Beginning application of radius'
+    cc[np.where(inCore==True)] = 4
+#;-------------------------------------------------
+#PRINT,'Beginning application of radius'
 
     # anywhere data is good, give it a 0 at least. 0 is stratiform
-    cs[np.where(good == True)] = 0
+    cs[np.where(good==True)] = 0
 
     In1 = np.where((cc > 0) & (bkgnd <= 25.))
-    if len(In1[0]):  # if there are any points that satisfy this
+    if len(In1[0]): # if there are any points that satisfy this
         cs = assign_radius(In1, cs, lat2d, lon2d, 1.0, 10, 1)
 
     In2 = np.where((cc > 0) & (bkgnd > 25.) & (bkgnd <= 32.))
