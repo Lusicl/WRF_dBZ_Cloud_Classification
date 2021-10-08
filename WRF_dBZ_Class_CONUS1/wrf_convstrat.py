@@ -124,7 +124,7 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * np.arcsin(np.sqrt(a)) 
     return c * re
 
-def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=35.0, method='SYH', a=10, b=100, tune_thresh=35.0, sm_rad=11, fill_dbz=0.0, bg_diff=10):
+def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
 
 #    xdim = N_ELEMENTS(x[*,0])-1
 #    ydim = N_ELEMENTS(y[0,*])-1
