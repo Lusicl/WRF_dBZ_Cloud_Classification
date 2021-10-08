@@ -189,12 +189,11 @@ def conv_stra_sep(dbz, lat2d, lon2d, CoreThresh=40.0, method='SYH', a=10, b=100,
 
     cc[np.where(inbkCore==True)] = 3
 
-#; Test for convective core threshold
+    #; Test for convective core threshold
     inCore = (dbz >= CoreThresh)
     cc[np.where(inCore==True)] = 4
-#;-------------------------------------------------
-#PRINT,'Beginning application of radius'
 
+    #;-------------------------------------------------
     # anywhere data is good, give it a 0 at least. 0 is stratiform
     cs[np.where(good==True)] = 0
 
