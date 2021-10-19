@@ -15,12 +15,15 @@ import datetime
 
 start_time = time.time()
 
-in_folder = '/home/krasmussen/scratch/DATA/PRECIP/June2017_meiyu/TerrainMod_1km/'
-out_fig_folder = '/home/krasmussen/scratch/RESEARCH/STORM_MODE_TRACKING/Rung_version/fig/TerrainMod/'
-out_fil_folder = '/home/krasmussen/scratch/RESEARCH/STORM_MODE_TRACKING/Rung_version/outfile/TerrainMod/'
+# '/home/krasmussen/scratch/DATA/PRECIP/June2017_meiyu/TerrainMod_1km/'
+in_folder = '/bell-scratch/acole/june09_WRF/enkf_3km/'
+# /home/krasmussen/scratch/RESEARCH/STORM_MODE_TRACKING/Rung_version/fig/TerrainMod/'
+out_fig_folder = '/bell-scratch/rpanasawatwong/storm-mode/202006/fig/'
+# '/home/krasmussen/scratch/RESEARCH/STORM_MODE_TRACKING/Rung_version/outfile/TerrainMod/'
+out_fil_folder = '/bell-scratch/rpanasawatwong/storm-mode/202006/outfile/'
 
 # Number of pixels needed to be a WCC - update WRF resolution as needed depending on input
-resolution_WRF = 1  # km
+resolution_WRF = 3  # km
 WCC_pixels_required = 800/resolution_WRF**2
 BSR_pixels_required = 30000/resolution_WRF**2
 dbz_threshold = 30
@@ -52,7 +55,7 @@ def storm_mask(filename, resolution_WRF=1, dbz_threshold=30, height_threshold=8)
     BSR_pixels_required = 30000/resolution_WRF**2
 
     # Read in an hourly WRF output file
-    nc = Dataset(filename,'r')
+    nc = Dataset(filename, 'r')
     dbz = wrf.getvar(nc, 'REFL_10CM')
     lon = wrf.getvar(nc, 'lon').data
     lat = wrf.getvar(nc, 'lat').data
@@ -68,6 +71,7 @@ def storm_mask(filename, resolution_WRF=1, dbz_threshold=30, height_threshold=8)
 
     # C/S Classification
     cs, __, __ = conv_strat_latlon(dbz_2km, lat, lon)
+    cs_original = cs
     cs[np.where(dbz_2km.data < 0)] = -1
     cs[np.where(np.isnan(dbz_2km))] = -1
 
@@ -91,7 +95,7 @@ def storm_mask(filename, resolution_WRF=1, dbz_threshold=30, height_threshold=8)
         # Do something to map DCCs
         for x in range(lon.shape[0]):
             for y in range(lon.shape[1]):
-                if labeled_array_DCC[x, y] == j :
+                if labeled_array_DCC[x, y] == j:
                     DCC_array[x, y] = 1
 
     label_id = []
@@ -124,7 +128,7 @@ def storm_mask(filename, resolution_WRF=1, dbz_threshold=30, height_threshold=8)
             # Do something to map WCCs
             for x in range(lon.shape[0]):
                 for y in range(lon.shape[1]):
-                    if labeled_array_WCC[x, y] == j :
+                    if labeled_array_WCC[x, y] == j:
                         WCC_array[x, y] = 1
 
     # DWCC Detection - need to check for overlaps in DCC and WCC arrays -------------------------------------
@@ -199,7 +203,7 @@ def storm_mask(filename, resolution_WRF=1, dbz_threshold=30, height_threshold=8)
                     if labeled_array_BSR[x, y] == j:
                         BSR_array[x, y] = 1
 
-    return DCC_array, DWCC_array, WCC_array, BSR_array, cs, lat, lon, z, vtime
+    return DCC_array, DWCC_array, WCC_array, BSR_array, cs_original, cs, lat, lon, z, vtime
 
 
 def mask_plot(DCC_array, DWCC_array, WCC_array, BSR_array, lat, lon, z, vtime, folder):
@@ -231,7 +235,7 @@ def mask_plot(DCC_array, DWCC_array, WCC_array, BSR_array, lat, lon, z, vtime, f
     # ax.set_ylim(wrf.cartopy_ylim(hght))
     ax.add_feature(states_provinces, edgecolor='black', linewidth=1)
     ax.gridlines(linestyle=':')
-    ax.coastlines('50m', linewidth=1) dwcc
+    ax.coastlines('50m', linewidth=1)
 
     # for shape in sf2.shapeRecords():
     #     x = [i[0] for i in shape.shape.points[:]]
@@ -301,13 +305,12 @@ def mask_netcdf(DCC_array, DWCC_array, WCC_array, BSR_array, cs, lat, lon, vtime
     TIMES = ds.createVariable('time', 'f4', ('time',))
     TIMES.longname = 'time'
     TIMES.units = 'days since 1970-01-01 00:00'
-    
 
-    LATS = ds.createVariable('lat', 'f4', ('lat','lon',))
+    LATS = ds.createVariable('lat', 'f4', ('lat', 'lon',))
     LATS.longname = 'latitude'
     LATS.units = 'degrees_north'
-    
-    LONS = ds.createVariable('lon', 'f4', ('lat','lon',))
+
+    LONS = ds.createVariable('lon', 'f4', ('lat', 'lon',))
     LONS.longname = 'longitude'
     LONS.units = 'degrees_east'
 
@@ -316,16 +319,17 @@ def mask_netcdf(DCC_array, DWCC_array, WCC_array, BSR_array, cs, lat, lon, vtime
     WCC_MASK = ds.createVariable('WCC_mask', 'f4', ('time', 'lat', 'lon',))
     BSR_MASK = ds.createVariable('BSR_mask', 'f4', ('time', 'lat', 'lon',))
     CS_MASK = ds.createVariable('CS_mask', 'f4', ('time', 'lat', 'lon',))
-    
-    TIMES[:] = date2num(vtime, units='days since 1970-01-01 00:00', calendar='standard')
+
+    TIMES[:] = date2num(
+        vtime, units='days since 1970-01-01 00:00', calendar='standard')
     LATS[:] = lat
     LONS[:] = lon
 
-    DCC_MASK[0,:] = DCC_array
-    DWCC_MASK[0,:] = DWCC_array
-    WCC_MASK[0,:] = WCC_array
-    BSR_MASK[0,:] = BSR_array
-    CS_MASK[0,:] = cs
+    DCC_MASK[0, :] = DCC_array
+    DWCC_MASK[0, :] = DWCC_array
+    WCC_MASK[0, :] = WCC_array
+    BSR_MASK[0, :] = BSR_array
+    CS_MASK[0, :] = cs
     # Global attributes
     ds.TITLE = 'STORM MODE MASKS FROM WRF V4.1.3 MODEL REAL-DATA CASE OUTPUT'
     ds.SIMULATION_START_DATE = '2017-06-01_12:00:00'
@@ -333,15 +337,16 @@ def mask_netcdf(DCC_array, DWCC_array, WCC_array, BSR_array, cs, lat, lon, vtime
     ds.close()
 
 
-
-
 for filename in os.listdir(in_folder):
-        # print(filename)
-    if filename.startswith('wrf') and filename[25:27] in ['00']: #and filename[19:27] in ['01_22:00']:
+    # print(filename)
+    # and filename[19:27] in ['01_22:00']:
+    if filename.startswith('wrf') and filename[25:27] in ['00']:
         print(filename)
-        dcc_mask, dwcc_mask, wcc_mask, bsr_mask, cs, lat, lon, z, vtime = storm_mask(
+        dcc_mask, dwcc_mask, wcc_mask, bsr_mask, cs_original, cs, lat, lon, z, vtime = storm_mask(
             in_folder+filename)
-        mask_plot(dcc_mask, dwcc_mask, wcc_mask, bsr_mask, lat, lon, z, vtime, out_fig_folder)
-        mask_netcdf(dcc_mask, dwcc_mask, wcc_mask, bsr_mask, cs, lat, lon, vtime, out_fil_folder)
+        mask_plot(dcc_mask, dwcc_mask, wcc_mask, bsr_mask,
+                  lat, lon, z, vtime, out_fig_folder)
+        mask_netcdf(dcc_mask, dwcc_mask, wcc_mask, bsr_mask,
+                    cs, lat, lon, vtime, out_fil_folder)
 
 print("--- %s seconds ---" % (time.time() - start_time))
