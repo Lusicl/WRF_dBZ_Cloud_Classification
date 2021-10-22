@@ -126,8 +126,8 @@ def haversine(lat1, lon1, lat2, lon2):
 
 def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=100, tune_thresh=46.0, sm_rad=11, fill_dbz=25.0, bg_diff=10):
 
-    # xdim = N_ELEMENTS(x[*,0])-1
-    # ydim = N_ELEMENTS(y[0,*])-1
+#    xdim = N_ELEMENTS(x[*,0])-1
+#    ydim = N_ELEMENTS(y[0,*])-1
 
     assert method in ['SYH', 'YH'] # make sure it's either SYH or YH
 
@@ -142,12 +142,12 @@ def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=
     cc = np.zeros_like(cs) - 1
     bkgnd = np.full(dbz.shape, np.nan)
 
+
     # if dbz is a masked array, then just grab the opposite of the mask
     if isinstance(dbz, np.ma.masked_array):
         bad = deepcopy(dbz.mask)
     else:
         bad = dbz == np.nan
-    
     good = np.logical_not(bad)
     
     dbz[np.where(bad)] = fill_dbz
@@ -169,8 +169,7 @@ def conv_strat_latlon(dbz, lat2d, lon2d, CoreThresh=46.0, method='SYH', a=10, b=
     #; Next line uses SYH 1995 radius algorithm
     if method == 'SYH':
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (dbz-bkgnd > (bg_diff-(bkgnd**2.)/180.))
-    
-    #; This line uses YH (1998) climatological tuning algorithm
+#; This line uses YH (1998) climatological tuning algorithm
     else:
         inCon = (bkgnd >= 0.) & (bkgnd < tune_thresh) & (dbz-bkgnd > a*np.cos((np.pi*bkgnd)/(2.*b)))
 
