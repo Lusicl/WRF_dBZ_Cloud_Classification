@@ -14,5 +14,6 @@ Last update - 20211029 - Hungjui Yu
 * xarray
 * pandas
 
-## Cloud Type (Storm Mode) Classification Flow Chart:
+## Cloud Type (Storm Mode) Classification Process Flow Chart:
+
 ![](https://github.com/yuhungjui/WRF_dBZ_Cloud_Classification/blob/main/WRF_dBZ_Class_CONUS1/Storm_Mode_Flow.png)
