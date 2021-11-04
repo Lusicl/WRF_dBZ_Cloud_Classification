@@ -19,7 +19,15 @@
 ## Please refer to [ https://github.com/yuhungjui/WRF_dBZ_Cloud_Classification ] for more informaiton on the algorithm.
 ## 
 ##
-## Run:             storm_mode_c5(refl, reflc, CS_mask, geoH)
+## Run:             DCC_mask, OCC_mask, WCC_mask, DWCC_mask, BSR_mask = stm.storm_mode_c5( refl
+##                                                                                       , reflc
+##                                                                                       , CS_mask
+##                                                                                       , geo_H
+##                                                                                       , grid_res
+##                                                                                       , thresholds_type
+##                                                                                       )
+##
+##                  Storm_Mode = stm.merge_to_Storm_Mode(DCC_mask, OCC_mask, WCC_mask, DWCC_mask, BSR_mask)
 ##
 ##
 ## Input:
