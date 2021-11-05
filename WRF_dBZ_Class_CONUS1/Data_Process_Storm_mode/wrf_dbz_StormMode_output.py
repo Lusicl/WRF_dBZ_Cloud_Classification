@@ -82,7 +82,7 @@ def main_function(file_date_time):
         da_wrf_reflc = da_wrf_dbz.max(dim='bottom_top')
         
         ## Get geopotential height:
-        data_wrf_z_unstag = wrf.destagger(getvar(nc_wrf_Z, 'Z', timeidx=hi, meta=False), 0)
+        data_wrf_z_unstag = wrf.destagger(wrf.getvar(nc_wrf_Z, 'Z', timeidx=hi, meta=False), 0)
         
         ## Storm Mode Classification (moderate thresholds):
         DCC_mask, OCC_mask, WCC_mask, DWCC_mask, BSR_mask = stm.storm_mode_c5( da_wrf_dbz
