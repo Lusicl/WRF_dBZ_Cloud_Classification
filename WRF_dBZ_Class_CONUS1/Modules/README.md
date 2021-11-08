@@ -2,7 +2,7 @@
 
 The modules include the **Convective/Stratiform masking** module and the **Storm Mode classification** module.
 
-## Convective/Stratiform Masking:
+## 1. Convective/Stratiform Masking:
 
 `conv_stra_mask.py`
 
@@ -23,7 +23,7 @@ where **2d_refl** is the specified level of interpolated reflectivity, for examp
   * 4       convective (35 < z <= 40 dBZ)
   * 5       convective (z > 40 dBZ)
 
-## Storm Mode Classification:
+## 2. Storm Mode Classification:
 
 `storm_mode_class5.py`
 
